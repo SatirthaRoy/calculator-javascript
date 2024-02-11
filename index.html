@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>calculator</title>
+
+  <style>
+    body {
+      color: white;
+      background-color: rgb(15, 15, 15);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    div {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(5, 1fr);
+      grid-column-gap: 10px;
+      grid-row-gap: 20px;
+      width: 30%;
+      margin: auto;
+    }
+
+    p {
+      font-size: 80px;
+      height: 100px;
+      margin: auto;
+      padding-right: 5%;
+      width: 30%;
+      text-align: right;
+      line-height: 100px;
+    }
+
+    button {
+      font-size: 50px;
+      border: none;
+      background-color: rgb(51, 51, 51);
+      color: white;
+      height: 100px;
+      width: 100px;
+      border-radius: 100px;
+      cursor: pointer;
+    }
+
+    .operator {
+      background-color: orange;
+    }
+
+    .operator-clicked {
+      color: orange;
+      background-color: white;
+    }
+
+    .clear {
+      font-size: 25px;
+    }
+
+    button:hover {
+      background-color: grey;
+    }
+
+    .operator:hover {
+      background-color: rgb(254, 222, 163);
+    }
+
+  </style>
+</head>
+<body>
+  <p></p>
+  <div>
+    <button onclick="AddToCalc(1)">1</button>
+    <button onclick="AddToCalc(2)">2</button>
+    <button onclick="AddToCalc(3)">3</button>
+    <button class="operator positive" onclick="setOp('+')">+</button>
+    <button onclick="AddToCalc(4)">4</button>
+    <button onclick="AddToCalc(5)">5</button>
+    <button onclick="AddToCalc(6)">6</button>
+    <button class="operator negative" onclick="setOp('-')">-</button>
+    <button onclick="AddToCalc(7)">7</button>
+    <button onclick="AddToCalc(8)">8</button>
+    <button onclick="AddToCalc(9)">9</button>
+    <button class="operator multiple" onclick="setOp('*')">*</button>
+    <button onclick="AddToCalc(0)">0</button>
+    <button onclick="AddToCalc('.')">.</button>
+    <button onclick="calculate()">=</button>
+    <button class="operator division" onclick="setOp('/')">/</button>
+    <button class="clear" onclick="Clear()">Clear</button>
+  </div>
+  
+
+  <script>
+    let str = '';
+    let result;
+    let a;
+    let b;
+    let operator;
+    let last_op;
+
+    function updateHtml () {
+      document.querySelector('p').innerHTML = str;
+    }
+
+    
+
+    function Clear() {
+      // console.log('cleared');
+      str = '';
+      updateHtml();
+      toogleOff(last_op);
+    }
+
+    function AddToCalc(x) {
+      if(typeof str == 'number') {
+        Clear();
+        str += x;
+      } else {
+        str += x;
+      }
+      //console.log('str = '+ str);
+      last_op != null && toogleOff(last_op);
+      updateHtml();
+    }
+
+    function setab () {
+      if(!a) {
+        a = Number(str);
+        str = '';
+      } else {
+        b = Number(str);
+        str = '';
+      }
+      console.log(`a = ${a} b = ${b}`);
+    }
+
+    function setOp(op) {
+      if(!operator) {
+        operator = op;
+        //console.log('operator has set to ' + op);
+        last_op = op;
+        toogelOn(op);
+        setab();
+      } else {
+        //console.log('operator has set to ' + op);
+        continuousCalc();
+        operator = op;
+        toogelOn(op);
+        toogleOff(last_op);
+        last_op = op;
+      }
+      
+    }
+
+    function classSelector (op) {
+      switch (op) {
+        case '+':
+          return 'positive';
+        case '-':
+          return 'negative';
+          case '*':
+          return 'multiple';
+        case '/':
+          return 'division';
+      }
+    }
+
+    function toogelOn (operator) {
+      document.querySelector(`.${classSelector(operator)}`).classList.add('operator-clicked');
+      console.log('clikced');
+    }
+
+    function toogleOff (operator) {
+      document.querySelector(`.${classSelector(operator)}`).classList.remove('operator-clicked');
+    }
+
+    function calculation () {
+      switch(operator) {
+        case '+':
+          a += b;
+          b = null;
+          break;
+        case '-':
+          a -= b;
+          b = null;
+          break;
+        case '*':
+          a = a * b;
+          b = null;
+          break;
+        case '/':
+          a /= b;
+          b = null;
+          break;
+      }
+      return Number.isInteger(a) ?  a : a.toFixed(2) ;
+    }
+
+    function calculate () {
+      setab();
+      result = calculation();
+      str = result;
+      //console.log('calculate ' + result);
+      a = null;
+      operator = null;
+      updateHtml();
+      toogleOff(last_op);
+    }
+
+    function continuousCalc () {
+      setab();
+      result = calculation();
+      str = result;
+      updateHtml();
+      //console.log('continuous calculation '+result); 
+    }
+
+  </script>
+</body>
+</html>
